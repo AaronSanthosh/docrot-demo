@@ -12,8 +12,9 @@ class Task:
 
     title: str
     details: str = ""
-    priority: str = "medium"
+    priority: str = "normal"
     completed: bool = False
+    archived: bool = False
     tags: list[str] = field(default_factory=list)
     task_id: str = field(default_factory=lambda: uuid4().hex[:8])
     created_at: datetime = field(default_factory=datetime.utcnow)
@@ -29,6 +30,7 @@ def serialize_task(task: Task) -> dict[str, object]:
         "details": task.details,
         "priority": task.priority,
         "completed": task.completed,
+        "archived": task.archived,
         "tags": list(task.tags),
         "created_at": task.created_at.isoformat() + "Z",
         "completed_at": (

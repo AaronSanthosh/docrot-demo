@@ -3,14 +3,14 @@
 from datetime import datetime
 
 from .models import Task, serialize_task
-from .storage import all_tasks, get_task, remove_task, save_task
+from .storage import all_tasks, get_task, remove_task as delete_task_record, save_task
 
 
 def create_task(
     title: str,
     details: str = "",
     *,
-    priority: str = "medium",
+    priority: str = "normal",
     tags: list[str] | None = None,
 ) -> dict[str, object]:
     """Create a task with a title and optional details."""
@@ -29,14 +29,14 @@ def create_task(
     return serialize_task(task)
 
 
-def delete_task(task_id: str, *, archive: bool = False) -> dict[str, object]:
+def remove_task(task_id: str, *, archive: bool = False) -> dict[str, object]:
     """Delete a task by id and return whether it was removed."""
 
     task = get_task(task_id)
     if task is None:
         raise KeyError(f"unknown task: {task_id}")
 
-    removed = remove_task(task_id)
+    removed = delete_task_record(task_id)
     return {"deleted": removed, "archived": archive, "task_id": task_id}
 
 
@@ -70,6 +70,17 @@ def complete_task(task_id: str, *, completed_by: str = "system") -> dict[str, ob
     payload = serialize_task(task)
     payload["completed_by"] = completed_by
     return payload
+
+
+def archive_task(task_id: str) -> bool:
+    """Mark a task as archived."""
+
+    task = get_task(task_id)
+    if task is None:
+        raise KeyError(f"unknown task: {task_id}")
+
+    task.archived = True
+    return task.archived
 
 
 def rename_task(
