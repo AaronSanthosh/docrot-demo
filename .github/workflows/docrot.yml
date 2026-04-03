@@ -1,0 +1,15 @@
+name: Docrot Detector
+on: [push]
+jobs:
+  docrot:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: SuchiiJain/CS4485_Capstone@main
+        with:
+          firebase_service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
