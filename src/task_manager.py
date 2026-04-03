@@ -72,11 +72,31 @@ def complete_task(task_id: str, *, completed_by: str = "system") -> dict[str, ob
     return payload
 
 
+def rename_task(
+    task_id: str, new_title: str, *, updated_by: str = "system"
+) -> dict[str, object]:
+    """Rename a task and return the updated record."""
+
+    task = get_task(task_id)
+    if task is None:
+        raise KeyError(f"unknown task: {task_id}")
+
+    if not new_title.strip():
+        raise ValueError("new_title cannot be empty")
+
+    task.title = new_title.strip()
+    payload = serialize_task(task)
+    payload["updated_by"] = updated_by
+    return payload
+
+
 def summarize_tasks() -> dict[str, int]:
     """Return a small summary of completion counts."""
 
     items = all_tasks()
+    # Keep the summary compact for CLI-style output.
     completed = sum(1 for task in items if task.completed)
+
     return {
         "total": len(items),
         "completed": completed,
