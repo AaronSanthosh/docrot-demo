@@ -43,6 +43,7 @@ def remove_task(task_id: str, *, archive: bool = False) -> dict[str, object]:
 def list_tasks(
     *,
     include_completed: bool = True,
+    include_archived: bool = False,
     priority: str | None = None,
     tag: str | None = None,
 ) -> list[dict[str, object]]:
@@ -51,6 +52,8 @@ def list_tasks(
     items = all_tasks()
     if not include_completed:
         items = [task for task in items if not task.completed]
+    if not include_archived:
+        items = [task for task in items if not task.archived]
     if priority:
         items = [task for task in items if task.priority == priority.lower()]
     if tag:
@@ -83,6 +86,17 @@ def archive_task(task_id: str) -> bool:
     return task.archived
 
 
+def restore_task(task_id: str) -> dict[str, object]:
+    """Restore an archived task and return the updated task."""
+
+    task = get_task(task_id)
+    if task is None:
+        raise KeyError(f"unknown task: {task_id}")
+
+    task.archived = False
+    return serialize_task(task)
+
+
 def rename_task(
     task_id: str, new_title: str, *, updated_by: str = "system"
 ) -> dict[str, object]:
@@ -107,9 +121,11 @@ def summarize_tasks() -> dict[str, int]:
     items = all_tasks()
     # Keep the summary compact for CLI-style output.
     completed = sum(1 for task in items if task.completed)
+    archived = sum(1 for task in items if task.archived)
 
     return {
         "total": len(items),
         "completed": completed,
+        "archived": archived,
         "pending": len(items) - completed,
     }
