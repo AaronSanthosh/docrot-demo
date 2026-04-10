@@ -51,9 +51,24 @@ def count_tasks() -> dict[str, int]:
     return {"total": total, "completed": completed, "archived": archived, "active": total - completed - archived}
 
 
-def clear_all() -> int:
+def clear_all(*, confirm: bool = False) -> int:
     """Remove all tasks and return how many were deleted."""
 
+    if not confirm:
+        raise RuntimeError("must pass confirm=True to clear all tasks")
     count = len(TASKS)
     TASKS.clear()
     return count
+
+
+def export_all(fmt: str = "json") -> str:
+    """Export all tasks as a formatted string."""
+
+    import json
+    tasks = list(TASKS.values())
+    if fmt == "csv":
+        lines = ["id,title,priority,completed"]
+        for t in tasks:
+            lines.append(f"{t.task_id},{t.title},{t.priority},{t.completed}")
+        return "\n".join(lines)
+    return json.dumps([{"id": t.task_id, "title": t.title} for t in tasks])

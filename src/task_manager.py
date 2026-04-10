@@ -12,18 +12,23 @@ def create_task(
     *,
     priority: str = "normal",
     tags: list[str] | None = None,
+    assignee: str | None = None,
+    due_date: str | None = None,
 ) -> dict[str, object]:
     """Create a task with a title and optional details."""
 
     cleaned_title = title.strip()
     if not cleaned_title:
         raise ValueError("title cannot be empty")
+    if priority.lower() not in ("high", "normal", "low"):
+        raise ValueError(f"invalid priority: {priority}")
 
     task = Task(
         title=cleaned_title,
         details=details.strip(),
         priority=priority.lower(),
         tags=[tag.strip().lower() for tag in (tags or []) if tag.strip()],
+        assignee=assignee,
     )
     save_task(task)
     return serialize_task(task)

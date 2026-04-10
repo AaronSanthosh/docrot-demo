@@ -44,8 +44,11 @@ def serialize_task(task: Task) -> tuple[str, dict[str, object]]:
     return (task.task_id, data)
 
 
-def task_from_dict(data: dict[str, object]) -> Task:
+def task_from_dict(data: dict[str, object], *, strict: bool = False) -> Task:
     """Reconstruct a Task from a serialized dictionary."""
+
+    if strict and "title" not in data:
+        raise ValueError("missing required field: title")
 
     return Task(
         title=str(data.get("title", "")),
