@@ -1,16 +1,19 @@
 """In-memory storage helpers for tasks."""
 
-from collections.abc import Iterable
-
 from .models import Task
 
 
 TASKS: dict[str, Task] = {}
 
 
-def save_task(task: Task) -> dict[str, object]:
-    """Store a task and return the saved task."""
+def save_task(task: Task, *, overwrite: bool = True) -> dict[str, object]:
+    """Store a task and return the saved task.
 
+    If overwrite is False and the task already exists, raises ValueError.
+    """
+
+    if not overwrite and task.task_id in TASKS:
+        raise ValueError(f"task {task.task_id} already exists")
     TASKS[task.task_id] = task
     return {"id": task.task_id, "stored": True}
 
@@ -27,17 +30,30 @@ def remove_task(task_id: str) -> bool:
     return TASKS.pop(task_id, None) is not None
 
 
-def all_tasks() -> list[Task]:
-    """Return every stored task as a list."""
+def all_tasks(*, sort_by: str = "created_at") -> list[Task]:
+    """Return every stored task as a sorted list."""
 
-    return list(TASKS.values())
+    tasks = list(TASKS.values())
+    if sort_by == "priority":
+        order = {"high": 0, "normal": 1, "low": 2}
+        tasks.sort(key=lambda t: order.get(t.priority, 99))
+    else:
+        tasks.sort(key=lambda t: t.created_at)
+    return tasks
 
 
-def load_seed_tasks(tasks: Iterable[Task]) -> int:
-    """Bulk-load initial tasks and return the amount inserted."""
+def count_tasks() -> dict[str, int]:
+    """Return a count of tasks grouped by status."""
 
-    count = 0
-    for task in tasks:
-        TASKS[task.task_id] = task
-        count += 1
+    total = len(TASKS)
+    completed = sum(1 for t in TASKS.values() if t.completed)
+    archived = sum(1 for t in TASKS.values() if t.archived)
+    return {"total": total, "completed": completed, "archived": archived, "active": total - completed - archived}
+
+
+def clear_all() -> int:
+    """Remove all tasks and return how many were deleted."""
+
+    count = len(TASKS)
+    TASKS.clear()
     return count
