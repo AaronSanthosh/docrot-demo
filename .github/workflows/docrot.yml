@@ -12,4 +12,4 @@ jobs:
           fetch-depth: 0
       - uses: SuchiiJain/CS4485_Capstone@main
         with:
-          firebase_service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          backend_url: ${{ secrets.DOCROT_BACKEND_URL }}
