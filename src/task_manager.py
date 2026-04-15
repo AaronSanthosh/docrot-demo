@@ -15,6 +15,7 @@ def create_task(
     assignee: str | None = None,
     due_date: str | None = None,
     created_by: str = "system",
+    source: str = "manual",
 ) -> dict[str, object]:
     """Create a task with a title and optional details."""
 
@@ -34,6 +35,7 @@ def create_task(
     save_task(task)
     payload = serialize_task(task)
     payload["created_by"] = created_by
+    payload["source"] = source
     return payload
 
 

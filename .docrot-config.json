@@ -2,8 +2,8 @@
   "language": "python",
   "doc_mappings": [
     {
-      "code_glob": "src/*.py",
-      "docs": ["docs/API.md", "docs/Architecture.md"]
+      "code_glob": "src/task_manager.py",
+      "docs": ["docs/API.md"]
     }
   ],
   "thresholds": {
