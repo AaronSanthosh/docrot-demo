@@ -14,6 +14,7 @@ def create_task(
     tags: list[str] | None = None,
     assignee: str | None = None,
     due_date: str | None = None,
+    created_by: str = "system",
 ) -> dict[str, object]:
     """Create a task with a title and optional details."""
 
@@ -31,7 +32,9 @@ def create_task(
         assignee=assignee,
     )
     save_task(task)
-    return serialize_task(task)
+    payload = serialize_task(task)
+    payload["created_by"] = created_by
+    return payload
 
 
 def remove_task(task_id: str, *, archive: bool = False) -> dict[str, object]:
