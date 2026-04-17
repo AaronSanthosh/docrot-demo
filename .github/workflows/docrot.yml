@@ -10,6 +10,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: SuchiiJain/CS4485_Capstone@main
+      - uses: SuchiiJain/CS4485_Capstone@auto-fix
         with:
           backend_url: ${{ secrets.DOCROT_BACKEND_URL }}
