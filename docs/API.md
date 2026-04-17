@@ -7,15 +7,7 @@ This project exposes a lightweight task manager API for creating and tracking to
 ### `create_task(title, details="", *, priority="normal", tags=None) -> dict`
 
 ```python
-def create_task(
-    title: str,
-    details: str = "",
-    *,
-    priority: str = "normal",
-    tags: list[str] | None = None,
-    assignee: str | None = None,
-    due_date: str | None = None,
-) -> dict[str, object]:
+def create_task(title, details, priority, tags, assignee, due_date, created_by, source) -> Subscript(value=Name(id='dict', ctx=Load()), slice=Tuple(elts=[Name(id='str', ctx=Load()), Name(id='object', ctx=Load())], ctx=Load()), ctx=Load()):
     ...
 ```
 
