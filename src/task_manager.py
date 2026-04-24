@@ -17,6 +17,7 @@ def create_task(
     created_by: str = "system",
     source: str = "manual",
     notify: bool = False,
+    deadline: str | None = None,
 ) -> dict[str, object]:
     """Create a task with a title and optional details."""
 
@@ -38,6 +39,7 @@ def create_task(
     payload["created_by"] = created_by
     payload["source"] = source
     payload["notify"] = notify
+    payload["deadline"] = deadline
     return payload
 
 
@@ -70,11 +72,15 @@ def list_tasks(
         items = [task for task in items if task.priority == priority.lower()]
     if tag:
         items = [task for task in items if tag.lower() in task.tags]
+    items.sort(key=lambda t: t.created_at, reverse=True)
     return [serialize_task(task) for task in items]
 
 
 def complete_task(task_id: str, *, completed_by: str = "system") -> dict[str, object]:
     """Mark a task as completed and return the updated task."""
+
+    if not completed_by.strip():
+        raise ValueError("completed_by cannot be empty")
 
     task = get_task(task_id)
     if task is None:
