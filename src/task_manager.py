@@ -18,6 +18,7 @@ def create_task(
     source: str = "manual",
     notify: bool = False,
     deadline: str | None = None,
+    category: str = "general",
 ) -> dict[str, object]:
     """Create a task with a title and optional details."""
 
@@ -40,6 +41,7 @@ def create_task(
     payload["source"] = source
     payload["notify"] = notify
     payload["deadline"] = deadline
+    payload["category"] = category
     return payload
 
 
