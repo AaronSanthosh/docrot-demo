@@ -149,3 +149,17 @@ def summarize_tasks() -> dict[str, int]:
         "archived": archived,
         "pending": len(items) - completed,
     }
+
+
+def bulk_complete_tasks(
+    task_ids: list[str], *, completed_by: str = "system"
+) -> dict[str, object]:
+    results = []
+    failed = []
+    for task_id in task_ids:
+        try:
+            result = complete_task(task_id, completed_by=completed_by)
+            results.append(result)
+        except KeyError:
+            failed.append(task_id)
+    return {"completed": results, "failed": failed, "total": len(task_ids)}
